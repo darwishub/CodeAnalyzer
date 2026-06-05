@@ -135,6 +135,14 @@ const RULES = [
   },
 ];
 
+// Patterns that indicate a value is a placeholder, not a real secret.
+const PLACEHOLDER_PATTERN =
+  /your_|_here\b|_example\b|example_|change_me|changeme|placeholder|<[^>]+>|\*{3,}|x{4,}|0{8,}|TODO|FIXME|xxxxxxxx/i;
+
+function isPlaceholder(line) {
+  return PLACEHOLDER_PATTERN.test(line);
+}
+
 function extractAddedLines(patch) {
   if (!patch || patch === "(binary or no diff available)") return [];
   return patch
@@ -154,7 +162,8 @@ export function scanForSecrets(commitDetails) {
     for (const file of commit.files) {
       const addedLines = extractAddedLines(file.patch);
 
-      addedLines.forEach((line, idx) => {
+      addedLines.forEach((line) => {
+        if (isPlaceholder(line)) return; // skip obvious example/template values
         for (const rule of RULES) {
           if (rule.pattern.test(line)) {
             findings.push({

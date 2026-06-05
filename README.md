@@ -103,34 +103,7 @@ Below is a real `result.md` generated from an actual repository.
 
 ## 🔒 SECURITY SCAN
 
-⚠️ **2 potential secret exposure(s) detected** — review and rotate any real credentials immediately.
-
-| Severity | Count |
-|---|---|
-| 🔴 Critical | 0 |
-| 🟠 High | 0 |
-| 🟡 Medium | 2 |
-
-### Findings
-
-#### 🟡 Potential Secret in Environment Assignment
-- **Severity:** MEDIUM
-- **Commit:** `db5c6b6` — Initial commit — SteinbergValentino monorepo
-- **File:** `cms/.env.example`
-- **Line preview:** `ADMIN_JWT_SECRET=your_admin_jwt_secret`
-
-#### 🟡 Potential Secret in Environment Assignment
-- **Severity:** MEDIUM
-- **Commit:** `db5c6b6` — Initial commit — SteinbergValentino monorepo
-- **File:** `cms/.env.example`
-- **Line preview:** `TRANSFER_TOKEN_SALT=your_transfer_token_salt`
-
-### Recommended Actions
-
-1. **Rotate every flagged credential immediately** — assume it is compromised once committed.
-2. Use environment variables or a secrets manager (e.g. AWS Secrets Manager, Vault, Doppler).
-3. Add a pre-commit hook (`git-secrets`, `gitleaks`, `detect-secrets`) to block future leaks.
-4. If the repo is public, check GitHub's **Security → Secret scanning** alerts.
+✅ **No exposed secrets detected** — no hardcoded credentials, tokens, or private keys were found in the added lines of this period's commits.
 
 ---
 
@@ -145,13 +118,13 @@ Lines removed: -4614
 
 ### CODE QUALITY (score out of 10)
 
-**Readability score: 8/10** — Generally clear with good commit messages, though some functions like `buildSrcSet()` in `promo-carousel.tsx` could benefit from more descriptive naming.
+**Readability score: 8/10** — Good overall with clear commit messages like "fix: repair malformed srcset URLs in carousel by using URL API instead of regex" (`680e4f5`), though some functions like `buildSrcSet()` could be more descriptively named.
 
-**Maintainability score: 7/10** — Several hardcoded values exist (e.g., Unsplash URL patterns in `f710218`) that should be configurable; good separation of concerns but some tight coupling between CMS and frontend types.
+**Maintainability score: 7/10** — Generally modular but has some tight coupling between Strapi and frontend (e.g., hardcoded Unsplash URL handling in `promo-carousel.tsx`). CMS integration is well-structured though.
 
-**Best practices score: 9/10** — Strong adherence to Next.js patterns with only minor issues like unhandled promises in `getStrapiMedia` error cases (`c99c4f3`). Excellent security practices with env var migration for API tokens.
+**Best practices score: 9/10** — Strong adherence to Next.js patterns (`generateMetadata`, dynamic imports) and security fixes (removing hardcoded API token in `9f373cf`). Minor deduction for remaining TODO in `layout.tsx`.
 
-**Overall score: 8/10** — Well-structured project with strong technical foundations and room for minor optimizations.
+**Overall score: 8/10** — High-quality work with clear performance optimizations and CMS integration, though some areas could benefit from better separation of concerns.
 
 ---
 
@@ -163,33 +136,33 @@ Most active session: Friday 2026-05-22 (~2.5h)
 Average session length: ~1.3h
 
 **Session breakdown:**
-1. **Friday 2026-05-22 | 02:05Z → 02:22Z | 1h** — Initial monorepo setup, security fixes, web directory restructuring
-2. **Friday 2026-05-22 | 08:14Z → 08:51Z | 1h** — Premium redesign implementation and Strapi URL configuration
-3. **Friday 2026-05-22 | 11:30Z → 13:39Z | 2.5h** — Performance optimizations (LCP/TBT) and CMS content migration
-4. **Friday 2026-05-22 | 16:46Z → 16:46Z | 1h** — Homepage CMS seed checkpoint
-5. **Saturday 2026-05-23 | 15:52Z → 16:54Z | 1.5h** — Full CMS integration and Railway deployment fixes
-6. **Sunday 2026-05-24 | 04:26Z → 05:07Z | 1h** — Image URL normalisation and final performance tweaks
+1. **Friday 2026-05-22 | 02:05Z → 02:22Z | 1h** — Initial monorepo setup, security fix for hardcoded API token, and web directory restructuring
+2. **Friday 2026-05-22 | 08:14Z → 08:51Z | 1h** — Premium redesign deployment and Strapi remotePattern fix for Railway production
+3. **Friday 2026-05-22 | 11:30Z → 13:39Z | 2.5h** — Performance optimizations (LCP/TBT improvements), CMS field migrations, and redesign checkpoint
+4. **Friday 2026-05-22 | 16:46Z → 16:46Z | 1h** — Homepage CMS seed checkpoint with Strapi content type updates
+5. **Saturday 2026-05-23 | 15:52Z → 16:54Z | 1.5h** — Full CMS integration and Railway deployment fixes (build commands, TS configs)
+6. **Sunday 2026-05-24 | 04:26Z → 05:07Z | 1h** — Final performance tweaks (carousel preload, URL normalization, metadata fixes)
 
 ---
 
 ### KEY OBSERVATIONS
 
 **What was done well ✅**
-- Excellent security hardening by migrating hardcoded tokens to env vars (`9f373cf`)
-- Thoughtful performance optimizations: preconnect, fetchPriority, and srcset (`b1bada8`, `f710218`)
-- Comprehensive CMS integration with proper fallback systems (`cacd7f5`)
+1. **Performance focus** — LCP optimizations via preconnect, fetchPriority (`b1bada8`), and image srcset fixes (`680e4f5`)
+2. **CMS integration** — All content moved to Strapi fields with proper fallbacks (`07d0931`)
+3. **Security** — API token moved to env vars (`9f373cf`) and localhost URL normalization (`c99c4f3`)
 
 **Areas for improvement ⚠️**
-- Magic numbers in image width/quality arrays (`f710218`)
-- Duplicated URL construction logic between `page.tsx` and `promo-carousel.tsx`
-- Incomplete error handling in `getStrapiMedia` (`c99c4f3`)
+1. **Magic strings** — Unsplash URL handling still hardcoded in multiple components (`f710218`)
+2. **Error handling** — Missing try/catch in some Strapi fetchers (`3105957`)
+3. **Testing gap** — No unit/integration tests visible in commits
 
 ---
 
 ### IMPROVEMENT SUGGESTIONS
 
-1. **Extract image width/quality presets** — Create a shared config for the `[640, 960, 1200]` breakpoints repeated across multiple files
-2. **Centralize URL utils** — Combine URL construction logic from `page.tsx` and `promo-carousel.tsx` into a shared `lib/urls.ts`
-3. **Enhance error logging** — Add Sentry or `console.error` logging in `getStrapiMedia`'s catch blocks
-4. **Document env requirements** — Create a `DEPLOYMENT.md` covering all required env vars (`STRAPI_URL`, etc.)
-5. **Add integration tests** — Puppeteer tests for critical paths like contact form submission and image loading
+1. **Extract image service logic** — Create a shared service for Unsplash URL handling rather than duplicating in carousel/page components
+2. **Add error boundaries** — Wrap Strapi fetches in consistent error handling (reference `3105957`'s try/catch pattern)
+3. **Env validation** — Add runtime checks for required env vars like `STRAPI_API_TOKEN`
+4. **Testing** — Introduce Jest/Vitest for critical paths like `getStrapiMedia` URL normalization
+5. **Document CMS schema** — Add a `schema.md` explaining Strapi content relationships for future maintainers
