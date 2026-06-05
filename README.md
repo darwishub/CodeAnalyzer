@@ -85,7 +85,7 @@ result.md + console output
 
 ---
 
-## Example Output
+## Example Output (REAL Project => https://github.com/darwishub/steinbergvalentino)
 
 Below is a real `result.md` generated from an actual repository.
 
